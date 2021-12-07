@@ -1,5 +1,5 @@
 # WHO-Life-Expectancy
-An analysis of countries' life expectancy is conducted from World Health Organization data using data visualization, simple/multiple linear regression, and statistical analysis in Rshiny. The features used in this dataset are:
+An analysis of countries' life expectancy is conducted from World Health Organization data using data visualization, simple/multiple linear regression, and statistical analysis in RShiny. The features used in this dataset are:
 * Developed or Developing Country Status
 * Adult Mortality Rate
 * Infant Deaths out of 1000
