@@ -22,7 +22,7 @@ shiny::runGitHub(repo = "WHO-Life-Expectancy",username = "samuel-gerstein",ref="
 
 ### Run App via shinyapps.io
 
-##App Tutorial
+## App Tutorial
 * Descriptive Statistics
   - Filter Data by Country and/or Year
   - Calculate the Mean, Median, or Standard Deviation of the Data by Year, Country, or Development Status
