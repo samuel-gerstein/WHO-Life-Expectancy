@@ -8,26 +8,33 @@
 #
 
 library(shiny)
+library(shinythemes)
+navbarPage(
+  theme = shinytheme("flatly"),
+  "WHO Life Expectancy Analysis",
+  tabPanel("Descriptive Statistics", 
+           tabsetPanel(
+            tabPanel("Filter by Country/Year",
+                     sidebarPanel(
+                       selectizeInput('country_bar',h2("Country"), choices=NULL, multiple=TRUE),
+                       selectInput('year_bar', h2('Year'),
+                                   choices = c(2000:2015), selectize = TRUE, multiple = TRUE)
+                     ),
+                    style='overflow: scroll', tableOutput("CountryTable")
+                    ),
+            tabPanel("Summary Statistics by Country, Year, Development",
+                     sidebarPanel(
+                       selectizeInput('group_bar',h3("Choose Variable to Group By:"), choices=c("Country","Year","Development"), multiple=FALSE),
+                       selectizeInput('statistic_bar',h3("Choose Statistic"), choices=c("Mean", "Median", "Standard Deviation"), multiple=FALSE)
+                     ),
+                     
+                     tableOutput("StatsTable")
+                     )
+           )
+           ),
+  tabPanel("Visualization",
+           
+           ),
+  tabPanel("Staistical Analysis", "contents3")
+  )
 
-# Define UI for application that draws a histogram
-shinyUI(fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-            plotOutput("distPlot")
-        )
-    )
-))

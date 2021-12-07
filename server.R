@@ -7,20 +7,118 @@
 #    http://shiny.rstudio.com/
 #
 
+source("global.R")
 library(shiny)
-
+library(tidyverse)
+data <- read.csv("https://raw.githubusercontent.com/samuel-gerstein/WHO-Life-Expectancy/main/Life%20Expectancy%20Data.csv", header = TRUE)
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+country_name <- data$Country
 
-    output$distPlot <- renderPlot({
+server <- function(input, output, session) {
 
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-
-    })
-
-})
+  ## Tab 1
+  updateSelectizeInput(session, "country_bar", choices = country_name, server = TRUE)
+  country_data <- reactive({
+    if(!is.null(input$country_bar) & !is.null(input$year_bar))
+    {
+      return(subset(data, country_name %in%input$country_bar & data$Year %in% input$year_bar))
+    }
+    else if(!is.null(input$country_bar))
+    {
+      return(subset(data, country_name %in%input$country_bar))
+    }
+    else
+    {
+      return(subset(data, data$Year %in%input$year_bar))
+    }
+  })
+  output$CountryTable <- renderTable(country_data())
+  
+  choice_data <- reactive({
+    if (input$group_bar == "Year" & input$statistic_bar == "Mean")
+    {
+      return(
+        data %>%
+          group_by(Year) %>%
+          select(-c("Status","Country")) %>%
+          summarize_all(mean,na.rm=TRUE)
+      )
+    }
+    
+    else if (input$group_bar == "Year" & input$statistic_bar == "Median")
+    {
+      return(
+        data %>%
+          group_by(Year) %>%
+          select(-c("Status","Country")) %>%
+          summarize_all(median,na.rm=TRUE)
+      )
+    }
+    else if (input$group_bar == "Year" & input$statistic_bar == "Standard Deviation")
+    {
+      return(
+        data %>%
+          group_by(Year) %>%
+          select(-c("Status","Country")) %>%
+          summarize_all(sd,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Country" & input$statistic_bar == "Mean")
+    {
+      return(
+        data %>%
+          group_by(Country) %>%
+          select(-c("Status","Year")) %>%
+          summarize_all(mean,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Country" & input$statistic_bar == "Median")
+    {
+      return(
+        data %>%
+          group_by(Country) %>%
+          select(-c("Status","Year")) %>%
+          summarize_all(median,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Country" & input$statistic_bar == "Standard Deviation")
+    {
+      return(
+        data %>%
+          group_by(Country) %>%
+          select(-c("Status","Year")) %>%
+          summarize_all(sd,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Development" & input$statistic_bar == "Mean")
+    {
+      return(
+        data %>%
+          group_by(Status) %>%
+          select(-c("Country","Year")) %>%
+          summarize_all(mean,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Development" & input$statistic_bar == "Median")
+    {
+      return(
+        data %>%
+          group_by(Status) %>%
+          select(-c("Country","Year")) %>%
+          summarize_all(median,na.rm=TRUE)
+      )
+    }
+    if (input$group_bar == "Development" & input$statistic_bar == "Standard Deviation")
+    {
+      return(
+        data %>%
+          group_by(Status) %>%
+          select(-c("Country","Year")) %>%
+          summarize_all(sd,na.rm=TRUE)
+      )
+    }
+  })
+  
+  output$StatsTable <- renderTable(choice_data())
+  ## Tab 2
+}
