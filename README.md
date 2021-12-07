@@ -14,6 +14,12 @@ Requirements:
 * R >= 4.1.2
 * Shiny >= 1.7.1
 
+```
+install.packages("shiny")
+library(shiny)
+shiny::runGitHub(repo = "<repo>",username = "<username >",ref="main")
+```
+
 ### Run App via shinyapps.io
 
 
