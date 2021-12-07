@@ -17,7 +17,7 @@ Requirements:
 ```
 install.packages("shiny")
 library(shiny)
-shiny::runGitHub(repo = "<repo>",username = "<username >",ref="main")
+shiny::runGitHub(repo = "WHO-Life-Expectancy",username = "samuel-gerstein",ref="main")
 ```
 
 ### Run App via shinyapps.io
