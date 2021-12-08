@@ -103,30 +103,40 @@ server <- function(input, output, session) {
     if (input$group_bar == "Development" &
         input$statistic_bar == "Mean")
     {
-      return(data %>%
-               group_by(Development) %>%
-               select(-c("Country", "Year")) %>%
-               summarize_all(mean, na.rm = TRUE))
+      return(
+        data %>%
+          group_by(Development) %>%
+          select(-c("Country", "Year")) %>%
+          summarize_all(mean, na.rm = TRUE)
+      )
     }
     if (input$group_bar == "Development" &
         input$statistic_bar == "Median")
     {
-      return(data %>%
-               group_by(Development) %>%
-               select(-c("Country", "Year")) %>%
-               summarize_all(median, na.rm = TRUE))
+      return(
+        data %>%
+          group_by(Development) %>%
+          select(-c("Country", "Year")) %>%
+          summarize_all(median, na.rm = TRUE)
+      )
     }
     if (input$group_bar == "Development" &
         input$statistic_bar == "Standard Deviation")
     {
-      return(data %>%
-               group_by(Development) %>%
-               select(-c("Country", "Year")) %>%
-               summarize_all(sd, na.rm = TRUE))
+      return(
+        data %>%
+          group_by(Development) %>%
+          select(-c("Country", "Year")) %>%
+          summarize_all(sd, na.rm = TRUE)
+      )
     }
   })
   
   output$StatsTable <- renderTable(choice_data())
+  
+  
+  
+  
   ## Tab 2
   observe({
     if (input$x_bar == "Life Expectancy")
@@ -207,7 +217,7 @@ server <- function(input, output, session) {
         scatter <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_point() +
-          labs(title = paste(input$x_bar,"vs.",input$y_bar))
+          labs(title = paste(input$x_bar, "vs.", input$y_bar))
         if (input$smoothed_option == TRUE)
         {
           scatter <- scatter + geom_smooth()
@@ -219,7 +229,7 @@ server <- function(input, output, session) {
         scatter <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_point(aes(color = .data[[input$z_bar]])) +
-          labs(title = paste(input$x_bar,"vs.",input$y_bar))
+          labs(title = paste(input$x_bar, "vs.", input$y_bar))
         
         if (input$smoothed_option == TRUE)
         {
@@ -235,7 +245,7 @@ server <- function(input, output, session) {
         boxplot <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_boxplot() +
-          labs(title = paste(input$x_bar,"vs.",input$y_bar))
+          labs(title = paste(input$x_bar, "vs.", input$y_bar))
         print(boxplot)
       }
       else
@@ -243,10 +253,22 @@ server <- function(input, output, session) {
         boxplot <-
           ggplot(na.omit(data), aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_boxplot() +
-          facet_wrap( ~ cut(.data[[input$z_bar]], 4)) +
-          labs(title = paste(input$x_bar,"vs.",input$y_bar,"(Faceted By",input$z_bar,")"))
+          facet_wrap(~ cut(.data[[input$z_bar]], 4)) +
+          labs(title = paste(
+            input$x_bar,
+            "vs.",
+            input$y_bar,
+            "(Faceted By",
+            input$z_bar,
+            ")"
+          ))
         print(boxplot)
       }
     }
   })
+  
+  
+  
+  ##Tab 3
+  
 }
