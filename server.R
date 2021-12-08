@@ -15,6 +15,9 @@ data <-
     "https://raw.githubusercontent.com/samuel-gerstein/WHO-Life-Expectancy/main/Life%20Expectancy%20Data.csv",
     header = TRUE
   )
+colnames(data)[which(names(data) == "Life.expectancy")] <-
+  "Life Expectancy"
+colnames(data)[which(names(data) == "Status")] <- "Development"
 # Define server logic required to draw a histogram
 country_name <- data$Country
 
@@ -186,5 +189,60 @@ server <- function(input, output, session) {
     }
   })
   
-  output$visualization <- 
+  observe({
+    if ((input$x_bar == "Development") | (input$y_bar) == "Development")
+    {
+      removeUI(selector = "#smoothed_option")
+    }
+    else
+    {
+      
+    }
+  })
+  output$visualization <- renderPlot({
+    if ((input$x_bar != "Development") & (input$y_bar != "Development"))
+    {
+      if (is.null(input$z_bar))
+      {
+        scatter <-
+          ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
+          geom_point()
+        if (input$smoothed_option == TRUE)
+        {
+          scatter <- scatter + geom_smooth()
+        }
+        print(scatter)
+      }
+      else
+      {
+        scatter <-
+          ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
+          geom_point(aes(color = .data[[input$z_bar]]))
+        
+        if (input$smoothed_option == TRUE)
+        {
+          scatter <- scatter + geom_smooth()
+        }
+        print(scatter)
+      }
+    }
+    else
+    {
+      if (is.null(input$z_bar))
+      {
+        boxplot <-
+          ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
+          geom_boxplot()
+        print(boxplot)
+      }
+      else
+      {
+        boxplot <-
+          ggplot(na.omit(data), aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
+          geom_boxplot() +
+          facet_wrap( ~ cut(.data[[input$z_bar]], 4))
+        print(boxplot)
+      }
+    }
+  })
 }

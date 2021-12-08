@@ -72,8 +72,10 @@ navbarPage(
       ),
       
       checkboxGroupInput('z_bar', h3("Choose optional variable"), choices =
-                           NULL)
-    )
+                           NULL),
+      checkboxInput('smoothed_option', h6("Smoothed Line"))
+    ),
+    plotOutput("visualization")
   ),
   tabPanel("Staistical Analysis", "contents3")
 )
