@@ -270,5 +270,14 @@ server <- function(input, output, session) {
   
   
   ##Tab 3
-  
+  updateSelectizeInput(session,
+                       "predictor_bar",
+                       choices = colnames(data),
+                       server = TRUE)
+  observe({
+  updateSelectizeInput(session,
+                       "response_bar",
+                       choices = subset(colnames(data), !(colnames(data) %in% input$predictor_bar)),
+                       server = TRUE)
+  })
 }
