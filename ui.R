@@ -77,6 +77,22 @@ navbarPage(
     ),
     plotOutput("visualization")
   ),
-  tabPanel("Staistical Analysis", "contents3")
+  tabPanel(
+    "Staistical Analysis",
+    sidebarPanel(
+      selectizeInput(
+        'predictor_bar',
+        h3("Choose Predictor Variables for Linear Regression"),
+        choices = NULL,
+        multiple = TRUE
+      ),
+      selectizeInput(
+        'response_bar',
+        h3("Choose Response Variable for Linear Regression"),
+        choices = NULL,
+        multiple = FALSE
+      )
+    )
+  )
 )
 
