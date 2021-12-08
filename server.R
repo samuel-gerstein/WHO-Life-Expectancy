@@ -54,7 +54,7 @@ server <- function(input, output, session) {
     {
       return(data %>%
                group_by(Year) %>%
-               select(-c("Status", "Country")) %>%
+               select(-c("Development", "Country")) %>%
                summarize_all(mean, na.rm = TRUE))
     }
     
@@ -63,7 +63,7 @@ server <- function(input, output, session) {
     {
       return(data %>%
                group_by(Year) %>%
-               select(-c("Status", "Country")) %>%
+               select(-c("Development", "Country")) %>%
                summarize_all(median, na.rm = TRUE))
     }
     else if (input$group_bar == "Year" &
@@ -71,7 +71,7 @@ server <- function(input, output, session) {
     {
       return(data %>%
                group_by(Year) %>%
-               select(-c("Status", "Country")) %>%
+               select(-c("Development", "Country")) %>%
                summarize_all(sd, na.rm = TRUE))
     }
     if (input$group_bar == "Country" &
@@ -79,7 +79,7 @@ server <- function(input, output, session) {
     {
       return(data %>%
                group_by(Country) %>%
-               select(-c("Status", "Year")) %>%
+               select(-c("Development", "Year")) %>%
                summarize_all(mean, na.rm = TRUE))
     }
     if (input$group_bar == "Country" &
@@ -88,7 +88,7 @@ server <- function(input, output, session) {
       return(
         data %>%
           group_by(Country) %>%
-          select(-c("Status", "Year")) %>%
+          select(-c("Development", "Year")) %>%
           summarize_all(median, na.rm = TRUE)
       )
     }
@@ -97,14 +97,14 @@ server <- function(input, output, session) {
     {
       return(data %>%
                group_by(Country) %>%
-               select(-c("Status", "Year")) %>%
+               select(-c("Development", "Year")) %>%
                summarize_all(sd, na.rm = TRUE))
     }
     if (input$group_bar == "Development" &
         input$statistic_bar == "Mean")
     {
       return(data %>%
-               group_by(Status) %>%
+               group_by(Development) %>%
                select(-c("Country", "Year")) %>%
                summarize_all(mean, na.rm = TRUE))
     }
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
         input$statistic_bar == "Median")
     {
       return(data %>%
-               group_by(Status) %>%
+               group_by(Development) %>%
                select(-c("Country", "Year")) %>%
                summarize_all(median, na.rm = TRUE))
     }
@@ -120,7 +120,7 @@ server <- function(input, output, session) {
         input$statistic_bar == "Standard Deviation")
     {
       return(data %>%
-               group_by(Status) %>%
+               group_by(Development) %>%
                select(-c("Country", "Year")) %>%
                summarize_all(sd, na.rm = TRUE))
     }
@@ -206,7 +206,8 @@ server <- function(input, output, session) {
       {
         scatter <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
-          geom_point()
+          geom_point() +
+          labs(title = paste(input$x_bar,"vs.",input$y_bar))
         if (input$smoothed_option == TRUE)
         {
           scatter <- scatter + geom_smooth()
@@ -217,7 +218,8 @@ server <- function(input, output, session) {
       {
         scatter <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
-          geom_point(aes(color = .data[[input$z_bar]]))
+          geom_point(aes(color = .data[[input$z_bar]])) +
+          labs(title = paste(input$x_bar,"vs.",input$y_bar))
         
         if (input$smoothed_option == TRUE)
         {
@@ -232,7 +234,8 @@ server <- function(input, output, session) {
       {
         boxplot <-
           ggplot(data, aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
-          geom_boxplot()
+          geom_boxplot() +
+          labs(title = paste(input$x_bar,"vs.",input$y_bar))
         print(boxplot)
       }
       else
@@ -240,7 +243,8 @@ server <- function(input, output, session) {
         boxplot <-
           ggplot(na.omit(data), aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_boxplot() +
-          facet_wrap( ~ cut(.data[[input$z_bar]], 4))
+          facet_wrap( ~ cut(.data[[input$z_bar]], 4)) +
+          labs(title = paste(input$x_bar,"vs.",input$y_bar,"(Faceted By",input$z_bar,")"))
         print(boxplot)
       }
     }
