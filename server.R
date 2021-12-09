@@ -276,26 +276,41 @@ server <- function(input, output, session) {
                        choices = colnames(numeric_data),
                        server = TRUE)
   observe({
-  updateSelectizeInput(session,
-                       "response_bar",
-                       choices = subset(colnames(numeric_data), !(colnames(numeric_data) %in% input$predictor_bar)),
-                       server = TRUE)
+    updateSelectizeInput(session,
+                         "response_bar",
+                         choices = subset(
+                           colnames(numeric_data),!(colnames(numeric_data) %in% input$predictor_bar)
+                         ),
+                         server = TRUE)
   })
   
   ##Code Adapted from https://stackoverflow.com/questions/22670709/control-the-digit-display-of-fit-summary-after-regression
   lmModel <- reactive({
-    req(input$predictor_bar,input$response_bar)
+    req(input$predictor_bar, input$response_bar)
     x <- as.numeric(data[[as.name(input$predictor_bar)]])
     y <- as.numeric(data[[as.name(input$response_bar)]])
-    current_formula <- paste0(input$response_bar, " ~ ", paste0(input$predictor_bar, collapse = " + "))
+    current_formula <-
+      paste0(input$response_bar,
+             " ~ ",
+             paste0(input$predictor_bar, collapse = " + "))
     current_formula <- as.formula(current_formula)
-    model <- lm(current_formula, data = data, na.action=na.exclude)
+    model <-
+      lm(current_formula, data = data, na.action = na.exclude)
     return(model)
   })
   
   output$lmSummary <- renderPrint({
     req(lmModel())
-    print(summary(lmModel()), digits=2)
+    print(summary(lmModel()), digits = 2)
   })
   ##
+  
+  output$SimpReg <- renderPlot({
+    LReg <-
+      ggplot(data, aes(x = .data[[input$predictor_bar]], y = .data[[input$response_bar]])) +
+      geom_point() +
+      labs(title = paste(input$x_bar, "vs.", input$y_bar, "(w/ Line of Best Fit)")) +
+      geom_smooth(method="lm", na.rm = TRUE)
+    print(LReg)
+  })
 }

@@ -60,7 +60,7 @@ navbarPage(
       selectizeInput(
         'x_bar',
         h3("Choose x-variable"),
-        choices = c("Life Expectancy", "BMI", "Development"),
+        choices = c("Life_Expectancy", "BMI", "Development"),
         multiple = FALSE
       ),
       
@@ -93,9 +93,12 @@ navbarPage(
         multiple = FALSE
       )
     ),
-    mainPanel(
-      fluidRow(column(12, verbatimTextOutput('lmSummary')))
+    mainPanel(fluidRow(column(
+      12, verbatimTextOutput('lmSummary'),
+    conditionalPanel(condition = "input.predictor_bar.length == 1",
+      plotOutput("SimpReg")
     )
+    ))),
+    mainPanel()
   )
 )
-
