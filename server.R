@@ -286,7 +286,7 @@ server <- function(input, output, session) {
                          server = TRUE)
   })
   
-  ##Code Adapted from https://stackoverflow.com/questions/22670709/control-the-digit-display-of-fit-summary-after-regression
+  ##Code Adapted from https://stackoverflow.com/a/65416753
   lmModel <- reactive({
     req(input$predictor_bar, input$response_bar)
     x <- as.numeric(data[[as.name(input$predictor_bar)]])
@@ -317,7 +317,7 @@ server <- function(input, output, session) {
   })
 
   
-  ### Code Adapted from https://stackoverflow.com/questions/21269793/extract-formula-from-lm-with-coefficients-r, user 'Maverik"
+  ### Code Adapted from https://stackoverflow.com/a/26640226
 formula <- reactive({
   req(input$predictor_bar, input$response_bar)
   current_formula <-
@@ -330,6 +330,7 @@ formula <- reactive({
   return(current_formula)
 })
   output$by_hand <- renderText(formula())
-  
   ###
+  
+  
 }
