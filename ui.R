@@ -92,6 +92,9 @@ navbarPage(
         choices = NULL,
         multiple = FALSE
       )
+    ),
+    mainPanel(
+      fluidRow(column(12, verbatimTextOutput('lmSummary')))
     )
   )
 )

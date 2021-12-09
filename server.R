@@ -16,7 +16,7 @@ data <-
     header = TRUE
   )
 colnames(data)[which(names(data) == "Life.expectancy")] <-
-  "Life Expectancy"
+  "Life_Expectancy"
 colnames(data)[which(names(data) == "Status")] <- "Development"
 # Define server logic required to draw a histogram
 country_name <- data$Country
@@ -139,7 +139,7 @@ server <- function(input, output, session) {
   
   ## Tab 2
   observe({
-    if (input$x_bar == "Life Expectancy")
+    if (input$x_bar == "Life_Expectancy")
     {
       updateSelectizeInput(
         session,
@@ -164,16 +164,16 @@ server <- function(input, output, session) {
       updateSelectizeInput(
         session,
         "y_bar",
-        choices = c("Life Expectancy", "Development"),
+        choices = c("Life_Expectancy", "Development"),
         server = TRUE
       )
       observe({
-        if (input$y_bar == "Life Expectancy")
+        if (input$y_bar == "Life_Expectancy")
         {
           updateCheckboxGroupInput(session, "z_bar", choices = c("Development"))
         }
         else {
-          updateCheckboxGroupInput(session, "z_bar", choices = c("Life Expectancy"))
+          updateCheckboxGroupInput(session, "z_bar", choices = c("Life_Expectancy"))
         }
       })
     }
@@ -184,13 +184,13 @@ server <- function(input, output, session) {
       updateSelectizeInput(
         session,
         "y_bar",
-        choices = c("BMI", "Life Expectancy"),
+        choices = c("BMI", "Life_Expectancy"),
         server = TRUE
       )
       observe({
         if (input$y_bar == "BMI")
         {
-          updateCheckboxGroupInput(session, "z_bar", choices = c("Life Expectancy"))
+          updateCheckboxGroupInput(session, "z_bar", choices = c("Life_Expectancy"))
         }
         else {
           updateCheckboxGroupInput(session, "z_bar", choices = c("BMI"))
@@ -270,14 +270,32 @@ server <- function(input, output, session) {
   
   
   ##Tab 3
+  numeric_data <- select(data,-c("Country"))
   updateSelectizeInput(session,
                        "predictor_bar",
-                       choices = colnames(data),
+                       choices = colnames(numeric_data),
                        server = TRUE)
   observe({
   updateSelectizeInput(session,
                        "response_bar",
-                       choices = subset(colnames(data), !(colnames(data) %in% input$predictor_bar)),
+                       choices = subset(colnames(numeric_data), !(colnames(numeric_data) %in% input$predictor_bar)),
                        server = TRUE)
   })
+  
+  ##Code Adapted from https://stackoverflow.com/questions/22670709/control-the-digit-display-of-fit-summary-after-regression
+  lmModel <- reactive({
+    req(input$predictor_bar,input$response_bar)
+    x <- as.numeric(data[[as.name(input$predictor_bar)]])
+    y <- as.numeric(data[[as.name(input$response_bar)]])
+    current_formula <- paste0(input$response_bar, " ~ ", paste0(input$predictor_bar, collapse = " + "))
+    current_formula <- as.formula(current_formula)
+    model <- lm(current_formula, data = data, na.action=na.exclude)
+    return(model)
+  })
+  
+  output$lmSummary <- renderPrint({
+    req(lmModel())
+    print(summary(lmModel()), digits=2)
+  })
+  ##
 }
