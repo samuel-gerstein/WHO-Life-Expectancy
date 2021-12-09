@@ -79,26 +79,37 @@ navbarPage(
   ),
   tabPanel(
     "Staistical Analysis",
-    sidebarPanel(
-      selectizeInput(
-        'predictor_bar',
-        h3("Choose Predictor Variables for Linear Regression"),
-        choices = NULL,
-        multiple = TRUE
+    sidebarLayout(
+      sidebarPanel(
+        selectizeInput(
+          'predictor_bar',
+          h3("Choose Predictor Variables for Linear Regression"),
+          choices = NULL,
+          multiple = TRUE
+        ),
+        selectizeInput(
+          'response_bar',
+          h3("Choose Response Variable for Linear Regression"),
+          choices = NULL,
+          multiple = FALSE
+        )
       ),
-      selectizeInput(
-        'response_bar',
-        h3("Choose Response Variable for Linear Regression"),
-        choices = NULL,
-        multiple = FALSE
+      mainPanel(
+      tabsetPanel(
+        tabPanel("Linear Regression Model", mainPanel(fluidRow(
+          column(
+            12,
+            verbatimTextOutput('lmSummary'),
+            conditionalPanel(condition = "input.predictor_bar.length == 1",
+                             plotOutput("SimpReg"))
+          )
+        ),  fluidRow(
+          column(12, htmlOutput('by_hand')))),
+        tabPanel("Model Predictions",
+                
+                 )))
       )
-    ),
-    mainPanel(fluidRow(column(
-      12, verbatimTextOutput('lmSummary'),
-    conditionalPanel(condition = "input.predictor_bar.length == 1",
-      plotOutput("SimpReg")
+      )
     )
-    ))),
-    mainPanel()
   )
-)
+

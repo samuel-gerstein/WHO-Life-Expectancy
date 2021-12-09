@@ -271,6 +271,7 @@ server <- function(input, output, session) {
   
   ##Tab 3
   numeric_data <- select(data,-c("Country"))
+  y_data <- select(data,-c("Country", "Development"))
   updateSelectizeInput(session,
                        "predictor_bar",
                        choices = colnames(numeric_data),
@@ -279,7 +280,7 @@ server <- function(input, output, session) {
     updateSelectizeInput(session,
                          "response_bar",
                          choices = subset(
-                           colnames(numeric_data),!(colnames(numeric_data) %in% input$predictor_bar)
+                           colnames(y_data),!(colnames(y_data) %in% input$predictor_bar)
                          ),
                          server = TRUE)
   })
@@ -298,7 +299,6 @@ server <- function(input, output, session) {
       lm(current_formula, data = data, na.action = na.exclude)
     return(model)
   })
-  
   output$lmSummary <- renderPrint({
     req(lmModel())
     print(summary(lmModel()), digits = 2)
@@ -306,6 +306,7 @@ server <- function(input, output, session) {
   ##
   
   output$SimpReg <- renderPlot({
+    req(input$predictor_bar, input$response_bar)
     LReg <-
       ggplot(data, aes(x = .data[[input$predictor_bar]], y = .data[[input$response_bar]])) +
       geom_point() +
@@ -313,4 +314,21 @@ server <- function(input, output, session) {
       geom_smooth(method="lm", na.rm = TRUE)
     print(LReg)
   })
+
+  
+  ### Code Adapted from https://stackoverflow.com/questions/21269793/extract-formula-from-lm-with-coefficients-r, user 'Maverik"
+formula <- reactive({
+  req(input$predictor_bar, input$response_bar)
+  current_formula <-
+    paste0("y ~ ", round(coefficients(lmModel())[1],2), "", 
+           paste(sprintf(" %+.2f*%s ", 
+                         coefficients(lmModel())[-1],  
+                         names(coefficients(lmModel())[-1])), 
+                 collapse="")
+    )
+  return(current_formula)
+})
+  output$by_hand <- renderText(formula())
+  
+  ###
 }
