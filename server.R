@@ -10,6 +10,7 @@
 source("global.R")
 library(shiny)
 library(tidyverse)
+options(scipen = 999)
 data <-
   read.csv(
     "https://raw.githubusercontent.com/samuel-gerstein/WHO-Life-Expectancy/main/Life%20Expectancy%20Data.csv",
