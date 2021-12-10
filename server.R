@@ -327,14 +327,25 @@ server <- function(input, output, session) {
   
   #### Prediction Tab
   predicted <- reactive({
+    req(input$predictor_bar != 0 )
     a <- as.numeric(unlist(strsplit(input$values, ",")))
-    df = data.frame(t(a))
-    colnames(df) = input$predictor_bar
+    if (length(input$predictor_bar) == length(a))
+    {
+      df = data.frame(t(a))
+      colnames(df) = input$predictor_bar
     predicted <- predict(lmModel(),newdata=df)
     return(predicted)
+    }
+    else
+    {
+      return(NULL)
+    }
   })
   output$predictions <- renderPrint({
+    if (is.numeric(predicted()))
+        {
     paste0("Predicted ", input$response_bar, " = ", round(predicted(),2))
+    }
   })
   
 }
