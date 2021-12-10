@@ -1,12 +1,3 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 source("global.R")
 library(shiny)
 library(tidyverse)
@@ -336,9 +327,6 @@ server <- function(input, output, session) {
   
   #### Prediction Tab
   predicted <- reactive({
-    req(!is.null(input$predictor_bar))
-    req(!is.null(input$values))
-    req(length(input$predictor_bar) == length(input$values))
     a <- as.numeric(unlist(strsplit(input$values, ",")))
     df = data.frame(t(a))
     colnames(df) = input$predictor_bar
