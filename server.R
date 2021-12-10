@@ -254,7 +254,7 @@ server <- function(input, output, session) {
         boxplot <-
           ggplot(na.omit(data), aes(x = .data[[input$x_bar]], y = .data[[input$y_bar]])) +
           geom_boxplot() +
-          facet_wrap(~ cut(.data[[input$z_bar]], 4)) +
+          facet_wrap( ~ cut(.data[[input$z_bar]], 4)) +
           labs(title = paste(
             input$x_bar,
             "vs.",
@@ -271,8 +271,8 @@ server <- function(input, output, session) {
   
   
   ##Tab 3
-  numeric_data <- select(data,-c("Country"))
-  y_data <- select(data,-c("Country", "Development"))
+  numeric_data <- select(data, -c("Country"))
+  y_data <- select(data, -c("Country", "Development"))
   updateSelectizeInput(session,
                        "predictor_bar",
                        choices = colnames(numeric_data),
@@ -280,9 +280,9 @@ server <- function(input, output, session) {
   observe({
     updateSelectizeInput(session,
                          "response_bar",
-                         choices = subset(
-                           colnames(y_data),!(colnames(y_data) %in% input$predictor_bar)
-                         ),
+                         choices = subset(colnames(y_data), !(
+                           colnames(y_data) %in% input$predictor_bar
+                         )),
                          server = TRUE)
   })
   
@@ -311,26 +311,42 @@ server <- function(input, output, session) {
     LReg <-
       ggplot(data, aes(x = .data[[input$predictor_bar]], y = .data[[input$response_bar]])) +
       geom_point() +
-      labs(title = paste(input$x_bar, "vs.", input$y_bar, "(w/ Line of Best Fit)")) +
-      geom_smooth(method="lm", na.rm = TRUE)
+      geom_smooth(method = "lm", na.rm = TRUE)
     print(LReg)
   })
-
+  
   
   ### Code Adapted from https://stackoverflow.com/a/26640226
-formula <- reactive({
-  req(input$predictor_bar, input$response_bar)
-  current_formula <-
-    paste0("y ~ ", round(coefficients(lmModel())[1],2), "", 
-           paste(sprintf(" %+.2f*%s ", 
-                         coefficients(lmModel())[-1],  
-                         names(coefficients(lmModel())[-1])), 
-                 collapse="")
-    )
-  return(current_formula)
-})
+  formula <- reactive({
+    req(input$predictor_bar, input$response_bar)
+    current_formula <-
+      paste0(input$response_bar, " ~ ",
+             round(coefficients(lmModel())[1], 2),
+             "",
+             paste(sprintf(
+               " %+.2f*%s ",
+               coefficients(lmModel())[-1],
+               names(coefficients(lmModel())[-1])
+             ),
+             collapse = ""))
+    return(current_formula)
+  })
   output$by_hand <- renderText(formula())
   ###
   
+  #### Prediction Tab
+  predicted <- reactive({
+    req(!is.null(input$predictor_bar))
+    req(!is.null(input$values))
+    req(length(input$predictor_bar) == length(input$values))
+    a <- as.numeric(unlist(strsplit(input$values, ",")))
+    df = data.frame(t(a))
+    colnames(df) = input$predictor_bar
+    predicted <- predict(lmModel(),newdata=df)
+    return(predicted)
+  })
+  output$predictions <- renderPrint({
+    paste0("Predicted ", input$response_bar, " = ", round(predicted(),2))
+  })
   
 }
