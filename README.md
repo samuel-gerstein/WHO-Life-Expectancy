@@ -21,6 +21,7 @@ shiny::runGitHub(repo = "WHO-Life-Expectancy",username = "samuel-gerstein",ref="
 ```
 
 ### Run App via shinyapps.io
+https://15u3q4-samuel0gerstein.shinyapps.io/WHO-Life-Expectancy/
 
 ## App Tutorial
 * Descriptive Statistics
